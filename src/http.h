@@ -1,3 +1,6 @@
 #pragma once
 
-void handleHttpEvent();
+namespace http {
+    void initServer();
+    void listen();
+}

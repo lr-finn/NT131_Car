@@ -2,8 +2,20 @@
 #include "motors.h"
 #include <Arduino.h>
 #include <WebServer.h>
+#include "config.h"
 
-WebServer server(80);
+WebServer server(HTTP_PORT);
+
+void http::initServer()
+{
+    server.on("/", handleHttpEvent);
+    server.begin();
+    Serial.println("HTTP server started on port " + HTTP_PORT);
+}
+
+void http::listen() {
+    server.handleClient();
+}
 
 void handleHttpEvent()
 {

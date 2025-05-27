@@ -5,17 +5,41 @@
 #include <ArduinoOTA.h>
 
 #include "motors.h"
+#include "http.h"
 
 // Define pin connections
-#define TRIG_PIN 32
-#define ECHO_PIN 33
-#define SERVO_PIN 15
+#include "config.h"
 
 // WiFi
 const char *ssid = "Finn";
 const char *password = "123456789";
 
 Servo servo;
+
+void setup()
+{
+    Serial.begin(115200);
+    motors::setup();
+    setupUltrasonic();
+    servo.attach(SERVO_PIN);
+    servo.write(90); // Set initial servo position
+
+    // Phát WiFi ở chế độ Access Point
+    WiFi.softAP("ESP32_AP", "12345678");
+    Serial.println("ESP32 đang phát WiFi:");
+    Serial.print("SSID: ");
+    Serial.println(WiFi.softAPSSID());
+    Serial.print("IP Address: ");
+    Serial.println(WiFi.softAPIP());
+
+    http::initServer();
+}
+
+void loop()
+{
+    http::listen();
+    // scanAndMove(); // Continuously scan and move based on distance
+}
 
 // Setup
 void setupUltrasonic()
@@ -46,7 +70,7 @@ void scanAndMove()
 
     if (distance < 20)
     { // If an obstacle is detected within 20 cm
-        stopMotors();
+        motors::stopMotors();
         servo.write(45); // Adjust servo position if needed
         delay(2000);
 
@@ -64,54 +88,26 @@ void scanAndMove()
 
         if ((leftDistance > 20) && (leftDistance > rightDistance))
         {
-            forwardLeft();
+            motors::forwardLeft();
             delay(2000);
         }
         else if ((leftDistance < rightDistance) && (rightDistance > 20))
         {
-            forwardRight();
+            motors::forwardRight();
             delay(2000);
         }
         else if ((leftDistance < 20) && (rightDistance < 20))
         {
-            backwardLeft();
+            motors::backwardLeft();
             delay(2000);
         }
     }
     else
     {
-        moveForward();
+        motors::moveForward();
         delay(2000);
     }
 
     servo.write(90); // Reset servo position
     delay(2000);
-}
-
-void setup()
-{
-    Serial.begin(115200);
-    setupMotors();
-    setupUltrasonic();
-    servo.attach(SERVO_PIN);
-    servo.write(90); // Set initial servo position
-
-    // Phát WiFi ở chế độ Access Point
-    WiFi.softAP("ESP32_AP", "12345678");
-    Serial.println("ESP32 đang phát WiFi:");
-    Serial.print("SSID: ");
-    Serial.println(WiFi.softAPSSID());
-    Serial.print("IP Address: ");
-    Serial.println(WiFi.softAPIP());
-
-    Serial.println("Connected to WiFi");
-
-    server.on("/", handleHttpEvent);
-    server.begin();
-}
-
-void loop()
-{
-    server.handleClient();
-    // scanAndMove(); // Continuously scan and move based on distance
 }

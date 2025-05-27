@@ -1,12 +1,8 @@
 #include "motors.h"
 #include <Arduino.h>
+#include "config.h"
 
-#define LEFT_MOTOR_FORWARD 25
-#define LEFT_MOTOR_BACKWARD 26
-#define RIGHT_MOTOR_FORWARD 27
-#define RIGHT_MOTOR_BACKWARD 14
-
-void setupMotors()
+void motors::setup()
 {
   pinMode(LEFT_MOTOR_FORWARD, OUTPUT);
   pinMode(LEFT_MOTOR_BACKWARD, OUTPUT);
@@ -15,7 +11,7 @@ void setupMotors()
 }
 
 // Control functions for the car
-void moveForward()
+void motors::moveForward()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, HIGH);
   digitalWrite(LEFT_MOTOR_BACKWARD, LOW);
@@ -24,7 +20,7 @@ void moveForward()
   Serial.println("Forward");
 }
 
-void moveBackward()
+void motors::moveBackward()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, LOW);
   digitalWrite(LEFT_MOTOR_BACKWARD, HIGH);
@@ -33,7 +29,7 @@ void moveBackward()
   Serial.println("Backward");
 }
 
-void turnLeft()
+void motors::turnLeft()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, LOW);
   digitalWrite(LEFT_MOTOR_BACKWARD, HIGH);
@@ -42,7 +38,7 @@ void turnLeft()
   Serial.println("Left");
 }
 
-void turnRight()
+void motors::turnRight()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, HIGH);
   digitalWrite(LEFT_MOTOR_BACKWARD, LOW);
@@ -51,7 +47,7 @@ void turnRight()
   Serial.println("Right");
 }
 
-void forwardLeft()
+void motors::forwardLeft()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, LOW);
   digitalWrite(LEFT_MOTOR_BACKWARD, LOW);
@@ -62,7 +58,7 @@ void forwardLeft()
   Serial.println("Forward Left");
 }
 
-void forwardRight()
+void motors::forwardRight()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, HIGH);
   digitalWrite(LEFT_MOTOR_BACKWARD, LOW);
@@ -73,7 +69,7 @@ void forwardRight()
   Serial.println("Forward Right");
 }
 
-void backwardLeft()
+void motors::backwardLeft()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, LOW);
   digitalWrite(LEFT_MOTOR_BACKWARD, LOW);
@@ -84,7 +80,7 @@ void backwardLeft()
   Serial.println("Backward Left");
 }
 
-void backwardRight()
+void motors::backwardRight()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, LOW);
   digitalWrite(LEFT_MOTOR_BACKWARD, HIGH);
@@ -95,7 +91,7 @@ void backwardRight()
   Serial.println("Backward Right");
 }
 
-void stopMotors()
+void motors::stopMotors()
 {
   digitalWrite(LEFT_MOTOR_FORWARD, LOW);
   digitalWrite(LEFT_MOTOR_BACKWARD, LOW);
