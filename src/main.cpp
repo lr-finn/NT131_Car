@@ -16,6 +16,13 @@ const char *password = "123456789";
 
 Servo servo;
 
+// Setup
+void setupUltrasonic()
+{
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(ECHO_PIN, INPUT);
+}
+
 void setup()
 {
     Serial.begin(115200);
@@ -39,13 +46,6 @@ void loop()
 {
     http::listen();
     // scanAndMove(); // Continuously scan and move based on distance
-}
-
-// Setup
-void setupUltrasonic()
-{
-    pinMode(TRIG_PIN, OUTPUT);
-    pinMode(ECHO_PIN, INPUT);
 }
 
 // Measure distance using ultrasonic sensor

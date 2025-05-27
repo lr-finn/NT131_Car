@@ -6,6 +6,8 @@
 
 WebServer server(HTTP_PORT);
 
+void handleHttpEvent();
+
 void http::initServer()
 {
     server.on("/", handleHttpEvent);
@@ -23,47 +25,47 @@ void handleHttpEvent()
     String state = server.arg("State");
     if (state == "F")
     {
-        moveForward();
+        motors::moveForward();
         server.send(200, "text/plain", "Forward");
     }
     else if (state == "B")
     {
-        moveBackward();
+        motors::moveBackward();
         server.send(200, "text/plain", "Backward");
     }
     else if (state == "L")
     {
-        turnLeft();
+        motors::turnLeft();
         server.send(200, "text/plain", "Left");
     }
     else if (state == "R")
     {
-        turnRight();
+        motors::turnRight();
         server.send(200, "text/plain", "Right");
     }
     else if (state == "G")
     {
-        forwardLeft();
+        motors::forwardLeft();
         server.send(200, "text/plain", "Forward Left");
     }
     else if (state == "I")
     {
-        forwardRight();
+        motors::forwardRight();
         server.send(200, "text/plain", "Forward Right");
     }
     else if (state == "H")
     {
-        backwardLeft();
+        motors::backwardLeft();
         server.send(200, "text/plain", "Backward Left");
     }
     else if (state == "J")
     {
-        backwardRight();
+        motors::backwardRight();
         server.send(200, "text/plain", "Backward Right");
     }
     else if (state == "S")
     {
-        stopMotors();
+        motors::stopMotors();
         server.send(200, "text/plain", "Stop");
     }
     else

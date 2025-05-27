@@ -2,6 +2,8 @@
 #include <Arduino.h>
 #include "config.h"
 
+using namespace motors;
+
 void motors::setup()
 {
   pinMode(LEFT_MOTOR_FORWARD, OUTPUT);
