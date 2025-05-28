@@ -3,6 +3,7 @@
 #include <Arduino.h>
 #include <WebServer.h>
 #include "config.h"
+#include "auto_mode.h"
 
 WebServer server(HTTP_PORT);
 
@@ -19,10 +20,50 @@ void http::listen() {
     server.handleClient();
 }
 
+TaskHandle_t autoModeTaskHandle = NULL;
+
+void startAutoModeTask() {
+    if (autoModeTaskHandle != NULL) return; // Task already running
+    xTaskCreatePinnedToCore(
+        autoModeTask, // Function to be called
+        "ScanAndMoveTask", // Name of the task
+        10000, // Stack size in words
+        NULL, // Task input parameter
+        1, // Task priority
+        &autoModeTaskHandle, // Task handle
+        0 // Core where the task should run (1 for core 1, 0 for core 0)
+    );
+}
+
+void stopAutoModeTask() {
+    if (autoModeTaskHandle != NULL) {
+        vTaskDelete(autoModeTaskHandle);
+        autoModeTaskHandle = NULL;
+    }
+}
+
 void handleHttpEvent()
 {
-    Serial.println("Handle connected");
+    static bool cac = 0;
     String state = server.arg("State");
+
+    if (state == "W") {
+        startAutoModeTask();
+        cac = 1;
+        server.send(200, "text/plain", "Auto Mode");
+    }
+    else if (state == "w") {
+        stopAutoModeTask();
+        cac = 0;
+        server.send(200, "text/plain", "Manual Mode");
+    }
+
+    if (cac)
+    {
+        server.send(200, "text/plain", "Auto Mode is running");
+        return;
+    }
+    
     if (state == "F")
     {
         motors::moveForward();
