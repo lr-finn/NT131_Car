@@ -44,21 +44,21 @@ void stopAutoModeTask() {
 
 void handleHttpEvent()
 {
-    static bool cac = 0;
+    static bool mode = 0;
     String state = server.arg("State");
 
     if (state == "W") {
         startAutoModeTask();
-        cac = 1;
+        mode = 1;
         server.send(200, "text/plain", "Auto Mode");
     }
     else if (state == "w") {
         stopAutoModeTask();
-        cac = 0;
+        mode = 0;
         server.send(200, "text/plain", "Manual Mode");
     }
 
-    if (cac)
+    if (mode)
     {
         server.send(200, "text/plain", "Auto Mode is running");
         return;
