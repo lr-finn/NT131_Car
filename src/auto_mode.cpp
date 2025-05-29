@@ -21,8 +21,12 @@ long measureDistance()
     delayMicroseconds(10);
     digitalWrite(TRIG_PIN, LOW);
 
-    long duration = pulseIn(ECHO_PIN, HIGH);
-    return int(duration / 29 / 2); // Convert to cm
+    long duration = pulseIn(ECHO_PIN, HIGH, 20000); // Thêm timeout 20ms để tránh treo chương trình
+    if (duration == 0)
+    {
+        return 400; // Khoảng cách ngoài phạm vi đo (giả định cảm biến tối đa 400 cm)
+    }
+    return duration / 29 / 2; // Chuyển đổi thành cm
 }
 
 void autoModeTask(void *pvParameters)
@@ -37,50 +41,87 @@ void autoModeTask(void *pvParameters)
 void scanAndMove()
 {
     servo.write(90); // Reset servo position
-    delay(500); // Allow servo to stabilize
+    delay(500);      // Allow servo to stabilize
 
     long distance = measureDistance();
     Serial.print("distance: ");
     Serial.println(distance);
 
+    motors::stopMotors();
+    delay(1000);
+    servo.write(45); // Adjust servo position if needed
+    delay(1000);
+    long rightDistance = measureDistance(); // Measure left distance
+    Serial.print("Right distance: ");
+    Serial.println(rightDistance);
+    delay(1000);
+    servo.write(135); // Adjust servo position to look right
+    delay(1000);
+    long leftDistance = measureDistance(); // Measure right distance
+    Serial.print("Left distance: ");
+    Serial.println(leftDistance);
+    delay(1000);
+
     if (distance < 20)
     { // If an obstacle is detected within 20 cm
-        motors::stopMotors();
-        delay(1000);
-        servo.write(45); // Adjust servo position if needed
-        delay(1000);
-
-        // Decide direction based on distance readings
-        long leftDistance = measureDistance(); // Measure left distance
-        Serial.print("Letf distance: ");
-        Serial.println(leftDistance);
-        delay(1000);
-        servo.write(135); // Adjust servo position to look right
-        delay(1000);
-        long rightDistance = measureDistance(); // Measure right distance
-        Serial.print("RIgth distance: ");
-        Serial.println(rightDistance);
-        delay(1000);
-
         if ((leftDistance > 20) && (leftDistance > rightDistance))
         {
+            motors::moveBackward();
+            delay(200);
+            motors::stopMotors();
+            delay(500);
             motors::forwardLeft();
-            delay(100);
+            delay(300);
+            motors::stopMotors();
+            delay(1000);
+            servo.write(90); // Reset servo position
+            delay(500);      // Allow servo to stabilize
         }
         else if ((leftDistance < rightDistance) && (rightDistance > 20))
         {
+            motors::moveBackward();
+            delay(200);
+            motors::stopMotors();
+            delay(500);
             motors::forwardRight();
-            delay(100);
+            delay(300);
+            motors::stopMotors();
+            delay(1000);
+            servo.write(90); // Reset servo position
+            delay(500);      // Allow servo to stabilize
         }
-        else if ((leftDistance < 20) && (rightDistance < 20))
+        else if ((leftDistance < 25) && (rightDistance < 25))
         {
-            motors::backwardLeft();
-            delay(100);
+            motors::moveBackward();
+            delay(200);
+            motors::stopMotors();
+            delay(1000);
+            motors::turnRight();
+            delay(200);
+            motors::stopMotors();
+            delay(1000);
+            servo.write(90); // Reset servo position
+            delay(500);      // Allow servo to stabilize
         }
+    }
+    else if ((distance > 20) && (leftDistance < 25) && (rightDistance < 25))
+    {
+        motors::moveBackward();
+        delay(200);
+        motors::stopMotors();
+        delay(1000);
+        motors::turnRight();
+        delay(200);
+        motors::stopMotors();
+        delay(1000);
+        servo.write(90); // Reset servo position
+        delay(500);      // Allow servo to stabilize
     }
     else
     {
         motors::moveForward();
         delay(100);
+        // servo.write(90); // Reset servo position
+        // delay(500); // Allow servo to stabilize
     }
 }
