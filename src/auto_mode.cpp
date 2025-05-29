@@ -62,7 +62,7 @@ void scanAndMove()
     Serial.println(leftDistance);
     delay(1000);
 
-    if (distance < 20)
+    if (distance < 25)
     { // If an obstacle is detected within 20 cm
         if ((leftDistance > 20) && (leftDistance > rightDistance))
         {
@@ -70,7 +70,7 @@ void scanAndMove()
             delay(200);
             motors::stopMotors();
             delay(500);
-            motors::forwardLeft();
+            motors::turnLeft();
             delay(300);
             motors::stopMotors();
             delay(1000);
@@ -83,7 +83,7 @@ void scanAndMove()
             delay(200);
             motors::stopMotors();
             delay(500);
-            motors::forwardRight();
+            motors::turnRight();
             delay(300);
             motors::stopMotors();
             delay(1000);
@@ -104,7 +104,7 @@ void scanAndMove()
             delay(500);      // Allow servo to stabilize
         }
     }
-    else if ((distance > 20) && (leftDistance < 25) && (rightDistance < 25))
+    else if ((distance > 25) && (leftDistance < 25) && (rightDistance < 25))
     {
         motors::moveBackward();
         delay(200);
