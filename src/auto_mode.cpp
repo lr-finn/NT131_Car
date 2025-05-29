@@ -36,6 +36,9 @@ void autoModeTask(void *pvParameters)
 
 void scanAndMove()
 {
+    servo.write(90); // Reset servo position
+    delay(500); // Allow servo to stabilize
+
     long distance = measureDistance();
     Serial.print("distance: ");
     Serial.println(distance);
@@ -43,44 +46,41 @@ void scanAndMove()
     if (distance < 20)
     { // If an obstacle is detected within 20 cm
         motors::stopMotors();
+        delay(1000);
         servo.write(45); // Adjust servo position if needed
-        delay(500);
+        delay(1000);
 
         // Decide direction based on distance readings
         long leftDistance = measureDistance(); // Measure left distance
         Serial.print("Letf distance: ");
         Serial.println(leftDistance);
-        delay(500);
+        delay(1000);
         servo.write(135); // Adjust servo position to look right
-        delay(2000);
+        delay(1000);
         long rightDistance = measureDistance(); // Measure right distance
         Serial.print("RIgth distance: ");
         Serial.println(rightDistance);
-        delay(500);
+        delay(1000);
 
         if ((leftDistance > 20) && (leftDistance > rightDistance))
         {
             motors::forwardLeft();
-            delay(500);
+            delay(100);
         }
         else if ((leftDistance < rightDistance) && (rightDistance > 20))
         {
             motors::forwardRight();
-            delay(500);
+            delay(100);
         }
         else if ((leftDistance < 20) && (rightDistance < 20))
         {
             motors::backwardLeft();
-            delay(500);
+            delay(100);
         }
-    servo.write(90);
     }
     else
     {
         motors::moveForward();
-        delay(500);
+        delay(100);
     }
-
-    servo.write(90); // Reset servo position
-    delay(500);
 }
