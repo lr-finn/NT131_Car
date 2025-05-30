@@ -47,23 +47,24 @@ void scanAndMove()
     Serial.print("distance: ");
     Serial.println(distance);
 
-    motors::stopMotors();
-    delay(1000);
-    servo.write(45); // Adjust servo position if needed
-    delay(1000);
-    long rightDistance = measureDistance(); // Measure left distance
-    Serial.print("Right distance: ");
-    Serial.println(rightDistance);
-    delay(1000);
-    servo.write(135); // Adjust servo position to look right
-    delay(1000);
-    long leftDistance = measureDistance(); // Measure right distance
-    Serial.print("Left distance: ");
-    Serial.println(leftDistance);
-    delay(1000);
-
     if (distance < 25)
     { // If an obstacle is detected within 20 cm
+        motors::stopMotors();
+        delay(1000);
+        servo.write(45); // Adjust servo position if needed
+        delay(1000);
+        long rightDistance = measureDistance(); // Measure left distance
+        Serial.print("Right distance: ");
+        Serial.println(rightDistance);
+        delay(1000);
+        servo.write(135); // Adjust servo position to look right
+        delay(1000);
+        long leftDistance = measureDistance(); // Measure right distance
+        Serial.print("Left distance: ");
+        Serial.println(leftDistance);
+        delay(1000);
+        servo.write(90); // Reset servo position
+        delay(500);      // Allow servo to stabilize
         if ((leftDistance > 20) && (leftDistance > rightDistance))
         {
             motors::moveBackward();
@@ -71,11 +72,9 @@ void scanAndMove()
             motors::stopMotors();
             delay(500);
             motors::turnLeft();
-            delay(300);
+            delay(500);
             motors::stopMotors();
             delay(1000);
-            servo.write(90); // Reset servo position
-            delay(500);      // Allow servo to stabilize
         }
         else if ((leftDistance < rightDistance) && (rightDistance > 20))
         {
@@ -84,11 +83,9 @@ void scanAndMove()
             motors::stopMotors();
             delay(500);
             motors::turnRight();
-            delay(300);
+            delay(500);
             motors::stopMotors();
             delay(1000);
-            servo.write(90); // Reset servo position
-            delay(500);      // Allow servo to stabilize
         }
         else if ((leftDistance < 25) && (rightDistance < 25))
         {
@@ -97,31 +94,13 @@ void scanAndMove()
             motors::stopMotors();
             delay(1000);
             motors::turnRight();
-            delay(200);
+            delay(500);
             motors::stopMotors();
             delay(1000);
-            servo.write(90); // Reset servo position
-            delay(500);      // Allow servo to stabilize
         }
-    }
-    else if ((distance > 25) && (leftDistance < 25) && (rightDistance < 25))
-    {
-        motors::moveBackward();
-        delay(200);
-        motors::stopMotors();
-        delay(1000);
-        motors::turnRight();
-        delay(200);
-        motors::stopMotors();
-        delay(1000);
-        servo.write(90); // Reset servo position
-        delay(500);      // Allow servo to stabilize
     }
     else
     {
         motors::moveForward();
-        delay(100);
-        // servo.write(90); // Reset servo position
-        // delay(500); // Allow servo to stabilize
     }
 }
